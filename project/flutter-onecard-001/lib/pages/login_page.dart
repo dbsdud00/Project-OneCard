@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:onecard/module/input_form_field.dart';
+import 'package:onecard/module/text_outline.dart';
+import 'package:onecard/module/validate.dart';
 import 'package:onecard/pages/main_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -9,6 +12,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _emailFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+  final _formKey = GlobalKey<FormState>();
+  String _emailValue = "";
+  String _passwordValue = "";
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -24,57 +32,23 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             child: Scaffold(
+              resizeToAvoidBottomInset: false,
               backgroundColor: const Color.fromARGB(0, 0, 0, 0),
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Stack(
-                      children: <Widget>[
-                        // Stroked text as border.
-                        Text(
-                          'CASINO',
-                          style: TextStyle(
-                            fontSize: 64,
-                            foreground: Paint()
-                              ..style = PaintingStyle.stroke
-                              ..strokeWidth = 6
-                              ..color = const Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                        // Solid text as fill.
-                        const Text(
-                          'CASINO',
-                          style: TextStyle(
-                            fontSize: 64,
-                            color: Color.fromARGB(255, 255, 255, 255),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      children: <Widget>[
-                        // Stroked text as border.
-                        Text(
-                          'OneCard',
-                          style: TextStyle(
-                            fontSize: 26,
-                            foreground: Paint()
-                              ..style = PaintingStyle.stroke
-                              ..strokeWidth = 6
-                              ..color = const Color.fromARGB(255, 0, 0, 0),
-                          ),
-                        ),
-                        // Solid text as fill.
-                        const Text(
-                          'OneCard',
-                          style: TextStyle(
-                              fontSize: 26,
-                              color: Color.fromARGB(255, 220, 220, 220)),
-                        ),
-                      ],
-                    ),
-                  ],
+              body: GestureDetector(
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      textOutline(textValue: "CASINO", fontSize: 64),
+                      textOutline(
+                          textValue: "OneCard",
+                          fontSize: 24,
+                          innerColor: const Color.fromARGB(255, 220, 220, 220))
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -98,55 +72,23 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: 300,
-                        height: 75,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            debugPrint("구글로그인 탭");
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const MainPage(),
-                            ));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 255, 124, 124),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: Text(
-                              "Google Login",
-                              style: TextStyle(fontSize: 24),
-                            ),
-                          ),
-                        ),
-                      ),
+                    inputFormField(
+                      focusNode: _emailFocus,
+                      validator: (value) => CheckValidate()
+                          .emailCheck(email: value!, focusNode: _emailFocus),
+                      setValue: (value) => _emailValue = value,
+                      hintText: "email",
+                      helpText: " ",
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(
-                        width: 300,
-                        height: 75,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            debugPrint("게스트 플레이 탭");
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 93, 93, 93),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Text(
-                              "Guest Play",
-                              style: TextStyle(fontSize: 24),
-                            ),
-                          ),
-                        ),
-                      ),
+                    inputFormField(
+                      focusNode: _passwordFocus,
+                      setValue: (value) => _passwordValue = value,
+                      validator: (value) => CheckValidate().passwordCheck(
+                          password: value!, focusNode: _passwordFocus),
+                      helpText: " ",
+                      hintText: "password",
                     ),
+                    loginBtn(),
                   ],
                 ),
               ),
@@ -154,6 +96,38 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget loginBtn() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color.fromARGB(255, 255, 124, 124),
+          padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+        ),
+        onPressed: () {
+          _formKey.currentState?.validate();
+          debugPrint("이메일 : $_emailValue , 비밀번호 : $_passwordValue");
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const MainPage(),
+          ));
+        },
+        child: const SizedBox(
+          width: double.infinity,
+          child: Text(
+            "로그인",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 15,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
