@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onecard/module/btn_elevated.dart';
 import 'package:onecard/module/text_outline.dart';
@@ -14,6 +15,24 @@ class StartPage extends StatefulWidget {
 
 class _StartPage extends State<StartPage> {
   bool isStart = false;
+
+  /// _authUser state 선언
+  late User? _authUser;
+
+  @override
+  void initState() {
+    // login 된 사용자 정보를 firebaseAuth 에 요청
+    _authUser = FirebaseAuth.instance.currentUser;
+    super.initState();
+  }
+
+  void updateAuthUser(User? user) {
+    debugPrint("########## 업데이트 AuthUser");
+    setState(() {
+      _authUser = user;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -105,7 +124,7 @@ class _StartPage extends State<StartPage> {
                           elevatedBtn(
                             context,
                             btnText: "Login",
-                            page: const LoginPage(),
+                            page: LoginPage(updateAuthUser: updateAuthUser),
                           ),
                           elevatedBtn(
                             context,

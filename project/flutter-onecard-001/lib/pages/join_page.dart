@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:onecard/module/input_form_field.dart';
 import 'package:onecard/module/text_outline.dart';
 import 'package:onecard/module/validate.dart';
-import 'package:onecard/pages/main_page.dart';
 
 class JoinPage extends StatefulWidget {
   const JoinPage({super.key});

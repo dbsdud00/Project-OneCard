@@ -6,8 +6,8 @@ import 'package:onecard/module/validate.dart';
 import 'package:onecard/pages/main_page.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
+  const LoginPage({super.key, required this.updateAuthUser});
+  final Function(User? user) updateAuthUser;
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
