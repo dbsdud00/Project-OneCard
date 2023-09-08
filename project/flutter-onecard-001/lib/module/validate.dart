@@ -40,4 +40,37 @@ class CheckValidate {
     }
     return null;
   }
+
+  String? rePasswordCheck({
+    required String password,
+    required String rePassword,
+    required FocusNode focusNode,
+  }) {
+    if (rePassword.isEmpty) {
+      focusNode.requestFocus();
+      return "비밀번호를 입력해 주세요";
+    } else {
+      if (rePassword != password) {
+        focusNode.requestFocus();
+        return "비밀번호가 다릅니다.";
+      }
+    }
+    return null;
+  }
+
+  String? nickNameCheck({
+    required String nickname,
+    required FocusNode focusNode,
+  }) {
+    if (nickname.isEmpty) {
+      focusNode.requestFocus();
+      return "닉네임을 입력해 주세요";
+    } else {
+      if (nickname.length > 10 || nickname.length < 2) {
+        focusNode.requestFocus();
+        return "닉네임은 2 ~ 10 자리로 입력해 주세요.";
+      }
+    }
+    return null;
+  }
 }

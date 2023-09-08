@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:onecard/module/btn_elevated.dart';
 import 'package:onecard/module/text_outline.dart';
+import 'package:onecard/pages/game_page.dart';
+import 'package:onecard/pages/join_page.dart';
 import 'package:onecard/pages/login_page.dart';
 
 class StartPage extends StatefulWidget {
@@ -109,11 +111,13 @@ class _StartPage extends State<StartPage> {
                             context,
                             btnText: "Join",
                             bgColor: const Color.fromARGB(255, 28, 201, 114),
+                            page: const JoinPage(),
                           ),
                           elevatedBtn(
                             context,
                             btnText: "GuestPlay",
                             bgColor: const Color.fromARGB(255, 93, 93, 93),
+                            page: const GamePage(),
                           ),
                         ],
                       ),

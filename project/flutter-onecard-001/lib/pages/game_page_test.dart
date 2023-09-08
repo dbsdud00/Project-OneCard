@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:onecard/model/card_style.dart';
 import 'package:playing_cards/playing_cards.dart';
 
-class GamePage extends StatefulWidget {
-  const GamePage({super.key});
+class GamePageTest extends StatefulWidget {
+  const GamePageTest({super.key});
 
   @override
-  State<GamePage> createState() => _GamePageState();
+  State<GamePageTest> createState() => _GamePageTestState();
 }
 
-class _GamePageState extends State<GamePage> {
+class _GamePageTestState extends State<GamePageTest> {
   // This style object overrides the styles for spades.
 
   List<PlayingCard> deck = standardFiftyFourCardDeck();

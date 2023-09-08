@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onecard/module/input_form_field.dart';
@@ -5,19 +6,23 @@ import 'package:onecard/module/text_outline.dart';
 import 'package:onecard/module/validate.dart';
 import 'package:onecard/pages/main_page.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class JoinPage extends StatefulWidget {
+  const JoinPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<JoinPage> createState() => _JoinPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _JoinPageState extends State<JoinPage> {
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
+  final _rePasswordFocus = FocusNode();
+  final _nickNameFocus = FocusNode();
   final _formKey = GlobalKey<FormState>();
   String _emailValue = "";
   String _passwordValue = "";
+  String _rePasswordValue = "";
+  String _nickNameValue = "";
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -45,9 +50,10 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       textOutline(textValue: "CASINO", fontSize: 64),
                       textOutline(
-                          textValue: "OneCard",
-                          fontSize: 24,
-                          innerColor: const Color.fromARGB(255, 220, 220, 220))
+                        textValue: "OneCard",
+                        fontSize: 24,
+                        innerColor: const Color.fromARGB(255, 220, 220, 220),
+                      )
                     ],
                   ),
                 ),
@@ -67,6 +73,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             child: Scaffold(
+              resizeToAvoidBottomInset: false,
               backgroundColor:
                   const Color.fromARGB(0, 255, 255, 255), // 배경색을 투명으로 설정
               body: Center(
@@ -80,7 +87,7 @@ class _LoginPageState extends State<LoginPage> {
                         validator: (value) => CheckValidate()
                             .emailCheck(email: value!, focusNode: _emailFocus),
                         setValue: (value) => _emailValue = value,
-                        hintText: "email",
+                        hintText: "이메일",
                         helpText: " ",
                       ),
                       inputFormField(
@@ -89,9 +96,27 @@ class _LoginPageState extends State<LoginPage> {
                         validator: (value) => CheckValidate().passwordCheck(
                             password: value!, focusNode: _passwordFocus),
                         helpText: " ",
-                        hintText: "password",
+                        hintText: "비밀번호",
                       ),
-                      loginBtn(),
+                      inputFormField(
+                        focusNode: _rePasswordFocus,
+                        setValue: (value) => _rePasswordValue = value,
+                        validator: (value) => CheckValidate().rePasswordCheck(
+                            password: _passwordValue,
+                            rePassword: value!,
+                            focusNode: _rePasswordFocus),
+                        helpText: " ",
+                        hintText: "비밀번호 확인",
+                      ),
+                      inputFormField(
+                        focusNode: _nickNameFocus,
+                        setValue: (value) => _nickNameValue = value,
+                        validator: (value) => CheckValidate().nickNameCheck(
+                            nickname: value!, focusNode: _nickNameFocus),
+                        helpText: " ",
+                        hintText: "닉네임",
+                      ),
+                      joinBtn(),
                     ],
                   ),
                 ),
@@ -103,12 +128,12 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget loginBtn() {
+  Widget joinBtn() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 255, 124, 124),
+          backgroundColor: const Color.fromARGB(255, 24, 147, 85),
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -116,27 +141,37 @@ class _LoginPageState extends State<LoginPage> {
         ),
         onPressed: () async {
           _formKey.currentState?.validate();
-          var result = await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: _emailValue,
-            password: _passwordValue,
-          );
-          debugPrint("------------------$result");
-          // widget.updateAuthUser(result.user);
-          // setState(() {});
-          if (!mounted) return;
-          // result.user != null ? true : false
-          // Navigator.pop(context, 데이터) : 현재 화면이 닫힐때
-          // 현재 화면을 열었던 곳으로 `데이터` 를 return
-          if (result.user != null) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const MainPage(),
-            ));
+          try {
+            var result =
+                await FirebaseAuth.instance.createUserWithEmailAndPassword(
+              email: _emailValue,
+              password: _passwordValue,
+            );
+            debugPrint("-------회원가입 결과-----------$result");
+            // widget.updateAuthUser(result.user);
+            // email, password 이외의 회원정보를 저장하려면 fireStore 에 저장을 해주어야 한다.
+
+            if (result.user != null) {
+              await FirebaseFirestore.instance
+                  .collection("user")
+                  .doc(result.user!.uid)
+                  .set({
+                "email": result.user!.email,
+                "nickname": _nickNameValue,
+              });
+              if (!mounted) return;
+              Navigator.pop(context);
+            }
+          } on FirebaseException catch (e) {
+            if (!mounted) return;
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(e.message!)));
           }
         },
         child: const SizedBox(
           width: double.infinity,
           child: Text(
-            "로그인",
+            "회원가입",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 18,
