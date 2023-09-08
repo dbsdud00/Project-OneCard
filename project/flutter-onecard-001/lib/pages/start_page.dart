@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:onecard/module/btn_elevated.dart';
 import 'package:onecard/module/text_outline.dart';
 import 'package:onecard/pages/login_page.dart';
-import 'package:onecard/pages/main_page.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -80,12 +79,17 @@ class _StartPage extends State<StartPage> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image(image: AssetImage('images/joker_color.png')),
+                            Image(
+                              image: AssetImage('images/Intro_img.png'),
+                              height: 200,
+                            ),
                             Padding(
                               padding: EdgeInsets.all(20.0),
                               child: Text(
                                 "click to start",
-                                style: TextStyle(fontSize: 24),
+                                style: TextStyle(
+                                    fontSize: 24,
+                                    color: Color.fromARGB(255, 235, 50, 50)),
                               ),
                             ),
                           ],

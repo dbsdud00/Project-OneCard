@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:onecard/module/input_form_field.dart';
 import 'package:onecard/module/text_outline.dart';
@@ -69,27 +70,30 @@ class _LoginPageState extends State<LoginPage> {
               backgroundColor:
                   const Color.fromARGB(0, 255, 255, 255), // 배경색을 투명으로 설정
               body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    inputFormField(
-                      focusNode: _emailFocus,
-                      validator: (value) => CheckValidate()
-                          .emailCheck(email: value!, focusNode: _emailFocus),
-                      setValue: (value) => _emailValue = value,
-                      hintText: "email",
-                      helpText: " ",
-                    ),
-                    inputFormField(
-                      focusNode: _passwordFocus,
-                      setValue: (value) => _passwordValue = value,
-                      validator: (value) => CheckValidate().passwordCheck(
-                          password: value!, focusNode: _passwordFocus),
-                      helpText: " ",
-                      hintText: "password",
-                    ),
-                    loginBtn(),
-                  ],
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      inputFormField(
+                        focusNode: _emailFocus,
+                        validator: (value) => CheckValidate()
+                            .emailCheck(email: value!, focusNode: _emailFocus),
+                        setValue: (value) => _emailValue = value,
+                        hintText: "email",
+                        helpText: " ",
+                      ),
+                      inputFormField(
+                        focusNode: _passwordFocus,
+                        setValue: (value) => _passwordValue = value,
+                        validator: (value) => CheckValidate().passwordCheck(
+                            password: value!, focusNode: _passwordFocus),
+                        helpText: " ",
+                        hintText: "password",
+                      ),
+                      loginBtn(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -110,12 +114,24 @@ class _LoginPageState extends State<LoginPage> {
             borderRadius: BorderRadius.circular(20),
           ),
         ),
-        onPressed: () {
+        onPressed: () async {
           _formKey.currentState?.validate();
-          debugPrint("이메일 : $_emailValue , 비밀번호 : $_passwordValue");
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const MainPage(),
-          ));
+          var result = await FirebaseAuth.instance.signInWithEmailAndPassword(
+            email: _emailValue,
+            password: _passwordValue,
+          );
+          debugPrint("------------------$result");
+          // widget.updateAuthUser(result.user);
+          // setState(() {});
+          if (!mounted) return;
+          // result.user != null ? true : false
+          // Navigator.pop(context, 데이터) : 현재 화면이 닫힐때
+          // 현재 화면을 열었던 곳으로 `데이터` 를 return
+          if (result.user != null) {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => const MainPage(),
+            ));
+          }
         },
         child: const SizedBox(
           width: double.infinity,

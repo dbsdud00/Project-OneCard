@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onecard/pages/main_page.dart';
 import 'package:onecard/pages/start_page.dart';
 
 Widget elevatedBtn(
@@ -9,6 +10,7 @@ Widget elevatedBtn(
   Widget? page,
   double? width,
   double? height,
+  double? fontSize,
 }) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
@@ -17,7 +19,7 @@ Widget elevatedBtn(
       height: height ?? 70,
       child: ElevatedButton(
         onPressed: () {
-          debugPrint("구글로그인 탭");
+          // debugPrint("구글로그인 탭");
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => page ?? const StartPage(),
           ));
@@ -29,7 +31,7 @@ Widget elevatedBtn(
           padding: const EdgeInsets.all(10.0),
           child: Text(btnText,
               style: TextStyle(
-                fontSize: 24,
+                fontSize: fontSize ?? 24,
                 color: textColor ?? const Color.fromARGB(255, 255, 255, 255),
               )),
         ),

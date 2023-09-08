@@ -15,7 +15,7 @@ Widget textOutline({
           fontSize: fontSize,
           foreground: Paint()
             ..style = PaintingStyle.stroke
-            ..strokeWidth = 6
+            ..strokeWidth = 10
             ..color = outlineColor ?? const Color.fromARGB(255, 0, 0, 0),
         ),
       ),

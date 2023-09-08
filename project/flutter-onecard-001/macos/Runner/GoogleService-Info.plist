@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>1010589985018-tjrullikg4qehrh2k777ad4p437acj20.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.1010589985018-tjrullikg4qehrh2k777ad4p437acj20</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAoF89OutReoKj32o6wZ4em0jUYNtG7Ui0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>1010589985018</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.yoooy.onecard.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>casino-onecard</string>
+	<key>STORAGE_BUCKET</key>
+	<string>casino-onecard.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:1010589985018:ios:6b9925ab60beb2ab9a8143</string>
+</dict>
+</plist>
