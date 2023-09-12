@@ -1,9 +1,9 @@
-class User {
+class GameUser {
   String nickname;
   int money;
-  User({
-    required this.nickname,
-    required this.money,
+  GameUser({
+    this.nickname = "",
+    this.money = 0,
   });
 }
 

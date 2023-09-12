@@ -11,21 +11,21 @@ class RankPage extends StatefulWidget {
 }
 
 class _RankPageState extends State<RankPage> {
-  final List<User> rankList = [
-    User(nickname: "test01", money: 1005),
-    User(nickname: "test02", money: 1004),
-    User(nickname: "test03", money: 1003),
-    User(nickname: "test04", money: 1002),
-    User(nickname: "test05", money: 1001),
-    User(nickname: "test06", money: 1000),
-    User(nickname: "test05", money: 1001),
-    User(nickname: "test06", money: 1000),
-    User(nickname: "test05", money: 1001),
-    User(nickname: "test06", money: 1000),
-    User(nickname: "test05", money: 1001),
-    User(nickname: "test06", money: 1000),
-    User(nickname: "test05", money: 1001),
-    User(nickname: "test06", money: 1000),
+  final List<GameUser> rankList = [
+    GameUser(nickname: "test01", money: 1005),
+    GameUser(nickname: "test02", money: 1004),
+    GameUser(nickname: "test03", money: 1003),
+    GameUser(nickname: "test04", money: 1002),
+    GameUser(nickname: "test05", money: 1001),
+    GameUser(nickname: "test06", money: 1000),
+    GameUser(nickname: "test05", money: 1001),
+    GameUser(nickname: "test06", money: 1000),
+    GameUser(nickname: "test05", money: 1001),
+    GameUser(nickname: "test06", money: 1000),
+    GameUser(nickname: "test05", money: 1001),
+    GameUser(nickname: "test06", money: 1000),
+    GameUser(nickname: "test05", money: 1001),
+    GameUser(nickname: "test06", money: 1000),
   ];
   @override
   Widget build(BuildContext context) {

@@ -120,8 +120,8 @@ class _LoginPageState extends State<LoginPage> {
             email: _emailValue,
             password: _passwordValue,
           );
-          debugPrint("------------------$result");
-          // widget.updateAuthUser(result.user);
+          debugPrint("-------로그인결과-----------$result");
+          await widget.updateAuthUser(result.user);
           // setState(() {});
           if (!mounted) return;
           // result.user != null ? true : false
@@ -129,7 +129,8 @@ class _LoginPageState extends State<LoginPage> {
           // 현재 화면을 열었던 곳으로 `데이터` 를 return
           if (result.user != null) {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => const MainPage(),
+              builder: (context) =>
+                  MainPage(updateAuthUser: widget.updateAuthUser),
             ));
           }
         },

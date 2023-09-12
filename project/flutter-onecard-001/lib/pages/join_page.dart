@@ -157,6 +157,7 @@ class _JoinPageState extends State<JoinPage> {
                   .set({
                 "email": result.user!.email,
                 "nickname": _nickNameValue,
+                "money": 0,
               });
               if (!mounted) return;
               Navigator.pop(context);

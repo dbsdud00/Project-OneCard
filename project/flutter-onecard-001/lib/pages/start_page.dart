@@ -5,6 +5,7 @@ import 'package:onecard/module/text_outline.dart';
 import 'package:onecard/pages/game_page.dart';
 import 'package:onecard/pages/join_page.dart';
 import 'package:onecard/pages/login_page.dart';
+import 'package:onecard/pages/main_page.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});
@@ -27,7 +28,7 @@ class _StartPage extends State<StartPage> {
   }
 
   void updateAuthUser(User? user) {
-    debugPrint("########## 업데이트 AuthUser");
+    debugPrint("########## 업데이트 AuthUser : $user");
     setState(() {
       _authUser = user;
     });
@@ -90,7 +91,16 @@ class _StartPage extends State<StartPage> {
                       onTap: () {
                         debugPrint("click to start");
                         setState(() {
-                          isStart = true;
+                          if (_authUser == null) {
+                            isStart = true;
+                            debugPrint("$_authUser");
+                          } else {
+                            isStart = false;
+                            debugPrint("$_authUser");
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    MainPage(updateAuthUser: updateAuthUser)));
+                          }
                         });
                         // Navigator.of(context).push(MaterialPageRoute(
                         //   builder: (context) => const LoginPage(),
