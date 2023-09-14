@@ -4,6 +4,7 @@ import 'package:onecard/module/input_form_field.dart';
 import 'package:onecard/module/text_outline.dart';
 import 'package:onecard/module/validate.dart';
 import 'package:onecard/pages/main_page.dart';
+import 'package:onecard/ui_models/auth_manager.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.updateAuthUser});
@@ -116,6 +117,11 @@ class _LoginPageState extends State<LoginPage> {
         ),
         onPressed: () async {
           _formKey.currentState?.validate();
+          try {
+            bool loginResult =
+                await AuthManage.signIn(_emailValue, _passwordValue);
+          } catch (e) {}
+
           var result = await FirebaseAuth.instance.signInWithEmailAndPassword(
             email: _emailValue,
             password: _passwordValue,

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:onecard/pages/main_page.dart';
 import 'package:onecard/pages/start_page.dart';
 
 Widget elevatedBtn(
@@ -29,11 +28,13 @@ Widget elevatedBtn(
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: Text(btnText,
-              style: TextStyle(
-                fontSize: fontSize ?? 24,
-                color: textColor ?? const Color.fromARGB(255, 255, 255, 255),
-              )),
+          child: Text(
+            btnText,
+            style: TextStyle(
+              fontSize: fontSize ?? 24,
+              color: textColor ?? const Color.fromARGB(255, 255, 255, 255),
+            ),
+          ),
         ),
       ),
     ),

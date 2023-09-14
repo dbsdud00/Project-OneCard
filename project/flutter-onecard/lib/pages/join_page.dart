@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:onecard/module/input_form_field.dart';
 import 'package:onecard/module/text_outline.dart';
 import 'package:onecard/module/validate.dart';
+import 'package:onecard/ui_models/auth_manager.dart';
 
 class JoinPage extends StatefulWidget {
   const JoinPage({super.key});
@@ -40,7 +41,7 @@ class _JoinPageState extends State<JoinPage> {
               resizeToAvoidBottomInset: false,
               backgroundColor: const Color.fromARGB(0, 0, 0, 0),
               body: GestureDetector(
-                onTap: () {
+                onTap: () async {
                   Navigator.pop(context);
                 },
                 child: Center(
@@ -141,31 +142,20 @@ class _JoinPageState extends State<JoinPage> {
         onPressed: () async {
           _formKey.currentState?.validate();
           try {
-            var result =
-                await FirebaseAuth.instance.createUserWithEmailAndPassword(
-              email: _emailValue,
-              password: _passwordValue,
-            );
-            debugPrint("-------회원가입 결과-----------$result");
+            bool joinResult = await AuthManage.createUser(
+                _emailValue, _passwordValue, _nickNameValue);
+            debugPrint("-------회원가입 결과-----------$joinResult");
             // widget.updateAuthUser(result.user);
             // email, password 이외의 회원정보를 저장하려면 fireStore 에 저장을 해주어야 한다.
 
-            if (result.user != null) {
-              await FirebaseFirestore.instance
-                  .collection("user")
-                  .doc(result.user!.uid)
-                  .set({
-                "email": result.user!.email,
-                "nickname": _nickNameValue,
-                "money": 0,
-              });
+            if (joinResult) {
               if (!mounted) return;
               Navigator.pop(context);
             }
-          } on FirebaseException catch (e) {
+          } catch (e) {
             if (!mounted) return;
             ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(e.message!)));
+                .showSnackBar(SnackBar(content: Text(e.toString())));
           }
         },
         child: const SizedBox(

@@ -104,7 +104,7 @@ class _MainPageState extends State<MainPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    player.nickname,
+                    player.nickname!,
                     style: const TextStyle(
                         fontSize: 30, color: Color.fromARGB(255, 53, 80, 255)),
                   ),
@@ -115,7 +115,9 @@ class _MainPageState extends State<MainPage> {
               onTap: () async {
                 var result = await FirebaseAuth.instance.signOut();
                 widget.updateAuthUser(null);
-                debugPrint("$_authUser");
+                debugPrint("로그아웃 authUser 리셋 : $_authUser");
+                player = GameUser();
+                debugPrint("로그아웃 playerDto 리셋 : ${player.toString()}");
                 if (!mounted) return;
                 Navigator.pop(context);
               },

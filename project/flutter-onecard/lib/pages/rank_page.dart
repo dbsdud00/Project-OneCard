@@ -78,8 +78,8 @@ class _RankPageState extends State<RankPage> {
                         itemCount: rankList.length,
                         itemBuilder: (context, index) => rank(
                             rank: index + 1,
-                            userName: rankList[index].nickname,
-                            money: rankList[index].money,
+                            userName: rankList[index].nickname!,
+                            money: rankList[index].money!,
                             rankColor: index == 0
                                 ? const Color.fromARGB(255, 212, 163, 17)
                                 : (index == 1

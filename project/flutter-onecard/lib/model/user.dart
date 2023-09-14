@@ -1,10 +1,31 @@
 class GameUser {
-  String nickname;
-  int money;
+  String? nickname;
+  int? money;
   GameUser({
-    this.nickname = "",
-    this.money = 0,
+    this.nickname,
+    this.money,
   });
+
+  Map<String, dynamic> toMap() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data["nickname"] = nickname;
+    data["money"] = money;
+    return data;
+  }
+
+  GameUser.fromJson(Map<String, dynamic> json) {
+    nickname = json["nickname"];
+    money = json["money"];
+  }
+
+  @override
+  String toString() {
+    var result = """
+      $nickname,
+      $money,
+      """;
+    return result;
+  }
 }
 
 // class Todo {
