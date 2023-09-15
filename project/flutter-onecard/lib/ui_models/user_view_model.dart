@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:onecard/model/user.dart';
 
 class UserViewModel extends ChangeNotifier {
-  var player = GameUser();
+  var player = GameUser(money: 0, nickname: "");
 
   final firestore = FirebaseFirestore.instance;
   Future<bool> getUser(User? authUser) async {

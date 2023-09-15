@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:onecard/model/user.dart';
 import 'package:onecard/module/input_form_field.dart';
 import 'package:onecard/module/text_outline.dart';
 import 'package:onecard/module/validate.dart';
@@ -8,7 +12,7 @@ import 'package:onecard/ui_models/auth_manager.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key, required this.updateAuthUser});
-  final Function(User? user) updateAuthUser;
+  final Function(User user) updateAuthUser;
   @override
   State<LoginPage> createState() => _LoginPageState();
 }
@@ -19,6 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   String _emailValue = "";
   String _passwordValue = "";
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -118,26 +123,18 @@ class _LoginPageState extends State<LoginPage> {
         onPressed: () async {
           _formKey.currentState?.validate();
           try {
-            bool loginResult =
-                await AuthManage.signIn(_emailValue, _passwordValue);
-          } catch (e) {}
+            bool result = await AuthManage.signIn(_emailValue, _passwordValue);
 
-          var result = await FirebaseAuth.instance.signInWithEmailAndPassword(
-            email: _emailValue,
-            password: _passwordValue,
-          );
-          debugPrint("-------로그인결과-----------$result");
-          await widget.updateAuthUser(result.user);
-          // setState(() {});
-          if (!mounted) return;
-          // result.user != null ? true : false
-          // Navigator.pop(context, 데이터) : 현재 화면이 닫힐때
-          // 현재 화면을 열었던 곳으로 `데이터` 를 return
-          if (result.user != null) {
-            Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  MainPage(updateAuthUser: widget.updateAuthUser),
-            ));
+            if (!mounted) return;
+
+            if (result) {
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      const MainPage() //updateAuthUser: widget.updateAuthUser),
+                  ));
+            }
+          } catch (e) {
+            debugPrint(e.toString());
           }
         },
         child: const SizedBox(

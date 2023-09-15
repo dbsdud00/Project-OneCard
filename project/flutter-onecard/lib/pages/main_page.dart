@@ -6,11 +6,11 @@ import 'package:onecard/module/btn_elevated.dart';
 import 'package:onecard/module/rank_list_item.dart';
 import 'package:onecard/module/text_outline.dart';
 import 'package:onecard/pages/game_page.dart';
+import 'package:onecard/pages/game_page_test.dart';
 import 'package:onecard/pages/rank_page.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key, required this.updateAuthUser});
-  final Function(User? user) updateAuthUser;
+  const MainPage({super.key});
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -20,9 +20,9 @@ class _MainPageState extends State<MainPage> {
   late User? _authUser;
   final firestore = FirebaseFirestore.instance;
   var player = GameUser();
-  void getUser() async {
+  void getUser(User? authUser) async {
     final usercol =
-        FirebaseFirestore.instance.collection("user").doc(_authUser!.uid);
+        FirebaseFirestore.instance.collection("user").doc(authUser!.uid);
     var checking = await usercol.get(); //받아오는 방식이므로 await필요(아래거 실행늦게 하게 하려면)
     if (checking.exists) {
       //존재성 확인하는 부분.
@@ -48,7 +48,7 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     // login 된 사용자 정보를 firebaseAuth 에 요청
     _authUser = FirebaseAuth.instance.currentUser;
-    getUser();
+    getUser(_authUser);
     super.initState();
   }
 
@@ -114,7 +114,6 @@ class _MainPageState extends State<MainPage> {
             GestureDetector(
               onTap: () async {
                 var result = await FirebaseAuth.instance.signOut();
-                widget.updateAuthUser(null);
                 debugPrint("로그아웃 authUser 리셋 : $_authUser");
                 player = GameUser();
                 debugPrint("로그아웃 playerDto 리셋 : ${player.toString()}");
@@ -134,7 +133,7 @@ class _MainPageState extends State<MainPage> {
                   elevatedBtn(context,
                       btnText: "Single", width: 150, page: const GamePage()),
                   elevatedBtn(context,
-                      btnText: "multi", width: 150, page: const GamePage()),
+                      btnText: "multi", width: 150, page: const GamePageTest()),
                 ],
               ),
             ),
@@ -155,7 +154,7 @@ class _MainPageState extends State<MainPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "${player.money}\$",
+                    "${player.money!}\$",
                     style: const TextStyle(
                         fontSize: 30, color: Color.fromARGB(255, 212, 163, 17)),
                   ),

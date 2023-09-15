@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:onecard/model/user.dart';
 import 'package:onecard/module/btn_elevated.dart';
 import 'package:onecard/module/text_outline.dart';
 import 'package:onecard/pages/game_page.dart';
@@ -98,8 +99,7 @@ class _StartPage extends State<StartPage> {
                             isStart = false;
                             debugPrint("$_authUser");
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    MainPage(updateAuthUser: updateAuthUser)));
+                                builder: (context) => const MainPage()));
                           }
                         });
                         // Navigator.of(context).push(MaterialPageRoute(

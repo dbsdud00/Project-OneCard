@@ -16,6 +16,12 @@ class _GamePageTestState extends State<GamePageTest> {
 
   @override
   Widget build(BuildContext context) {
+    deck.shuffle();
+    PlayingCard first = deck.removeAt(0);
+    List<PlayingCard> playerDeck = [];
+    for (int i = 0; i < 7; i++) {
+      playerDeck.add(deck.removeAt(0));
+    }
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -44,7 +50,7 @@ class _GamePageTestState extends State<GamePageTest> {
             SizedBox(
                 width: 300,
                 child: PlayingCardView(
-                  card: PlayingCard(Suit.joker, CardValue.joker_1),
+                  card: first,
                   style: myCardStyles,
                 )),
             SizedBox(
@@ -52,138 +58,48 @@ class _GamePageTestState extends State<GamePageTest> {
               width: 400,
               child: FlatCardFan(children: [
                 PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
+                  card: playerDeck[0],
                   // showBack: true,
                   elevation: 3.0,
                   shape: shape,
                   style: myCardStyles,
                 ),
                 PlayingCardView(
-                  card: PlayingCard(Suit.hearts, CardValue.ace),
+                  card: playerDeck[1],
                   // showBack: true,
                   elevation: 3.0,
                   shape: shape,
                   style: myCardStyles,
                 ),
                 PlayingCardView(
-                  card: PlayingCard(Suit.hearts, CardValue.ace),
+                  card: playerDeck[2],
                   // showBack: true,
                   elevation: 3.0,
                   shape: shape,
                   style: myCardStyles,
                 ),
                 PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
+                  card: playerDeck[3],
                   elevation: 3.0,
                   shape: shape,
                   style: myCardStyles,
                 ),
                 PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
+                  card: playerDeck[4],
                   // showBack: true,
                   elevation: 3.0,
                   shape: shape,
                   style: myCardStyles,
                 ),
                 PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
+                  card: playerDeck[5],
                   // showBack: true,
                   elevation: 3.0,
                   shape: shape,
                   style: myCardStyles,
                 ),
                 PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.hearts, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.hearts, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.spades, CardValue.ace),
-                  // showBack: true,
-                  elevation: 3.0,
-                  shape: shape,
-                  style: myCardStyles,
-                ),
-                PlayingCardView(
-                  card: PlayingCard(Suit.joker, CardValue.joker_2),
+                  card: playerDeck[6],
                   // showBack: true,
                   elevation: 3.0,
                   shape: shape,

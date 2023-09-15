@@ -65,13 +65,15 @@ class AuthManage {
   /// 로그인
   static Future<bool> signIn(String email, String pw) async {
     try {
-      final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: pw);
+      var result = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: pw,
+      );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        throw const MyException('No user found for that email.');
+        throw const MyException('없는 계정입니다.');
       } else if (e.code == 'wrong-password') {
-        throw const MyException('Wrong password provided for that user.');
+        throw const MyException('비밀번호가 틀렸습니다.');
       }
     } catch (e) {
       throw MyException(e.toString());

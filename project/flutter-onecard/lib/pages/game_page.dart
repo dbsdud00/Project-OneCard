@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:onecard/model/card_style.dart';
 import 'package:onecard/module/btn_elevated.dart';
+import 'package:onecard/module/game_helper.dart';
 import 'package:playing_cards/playing_cards.dart';
 
 class GamePage extends StatefulWidget {
@@ -14,6 +15,24 @@ class _GamePageState extends State<GamePage> {
   // This style object overrides the styles for spades.
 
   List<PlayingCard> deck = standardFiftyFourCardDeck();
+
+  List<PlayingCard> playerDeck = [];
+  List<PlayingCard> computerDeck = [];
+  List<PlayingCard> gameDeck = [];
+  int attackStack = 0;
+
+  @override
+  void initState() {
+    deck.shuffle();
+    for (int i = 0; i < 7; i++) {
+      playerDeck.add(deck.removeAt(0));
+    }
+    for (int i = 0; i < 7; i++) {
+      computerDeck.add(deck.removeAt(0));
+    }
+    gameDeck.add(deck.removeAt(0));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,20 +53,26 @@ class _GamePageState extends State<GamePage> {
               SizedBox(
                 height: 100,
                 width: 400,
-                child: playerCardDeck(),
+                child: playerCardDeck(computerDeck, true),
               ),
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(
-                      height: 100,
-                      child: PlayingCardView(
-                        card: PlayingCard(Suit.spades, CardValue.ace),
-                        showBack: true,
-                        elevation: 3.0,
-                        shape: shape,
-                        style: myCardStyles,
+                    GestureDetector(
+                      onTap: () {
+                        playerDeck.add(deck.removeAt(0));
+                        setState(() {});
+                      },
+                      child: SizedBox(
+                        height: 100,
+                        child: PlayingCardView(
+                          card: PlayingCard(Suit.spades, CardValue.ace),
+                          showBack: true,
+                          elevation: 3.0,
+                          shape: shape,
+                          style: myCardStyles,
+                        ),
                       ),
                     ),
                     elevatedBtn(context,
@@ -55,7 +80,7 @@ class _GamePageState extends State<GamePage> {
                     SizedBox(
                       height: 100,
                       child: PlayingCardView(
-                        card: PlayingCard(Suit.joker, CardValue.joker_1),
+                        card: gameDeck[gameDeck.length - 1],
                         // showBack: true,
                         elevation: 3.0,
                         shape: shape,
@@ -68,7 +93,7 @@ class _GamePageState extends State<GamePage> {
               SizedBox(
                 height: 100,
                 width: 400,
-                child: playerCardDeck(),
+                child: playerCardDeck(playerDeck, false),
               )
             ],
           ),
@@ -77,146 +102,71 @@ class _GamePageState extends State<GamePage> {
     );
   }
 
-  FlatCardFan playerCardDeck() {
-    return FlatCardFan(children: [
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.hearts, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.hearts, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.hearts, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.hearts, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.spades, CardValue.ace),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-      PlayingCardView(
-        card: PlayingCard(Suit.joker, CardValue.joker_2),
-        // showBack: true,
-        elevation: 3.0,
-        shape: shape,
-        style: myCardStyles,
-      ),
-    ]);
+  List<Widget> myDeck(List<PlayingCard> playerDeck, bool showBack) {
+    List<Widget> cardWidgetList = [];
+    for (int i = 0; i < playerDeck.length; i++) {
+      cardWidgetList.add(GestureDetector(
+        onTap: showBack
+            ? () {}
+            : () {
+                // debugPrint(
+                //     "1111111111${playerDeck.removeAt(i).suit.toString()}");
+                int gameCardValue = GameHelper().stringToNumber(
+                    gameDeck[gameDeck.length - 1]
+                        .value
+                        .toString()
+                        .split(".")[1]);
+                String gameCardSuit =
+                    gameDeck[gameDeck.length - 1].suit.toString().split(".")[1];
+                int myCardValue = GameHelper().stringToNumber(
+                    playerDeck[i].value.toString().split(".")[1]);
+                String myCardSuit = playerDeck[i].suit.toString().split(".")[1];
+                debugPrint("2222222222$myCardSuit");
+
+                if (gameCardValue == myCardValue) {
+                  if (gameCardValue >= 100) {
+                    attackStack += (gameCardValue / 100).round();
+                  }
+                  gameDeck.add(playerDeck.removeAt(i));
+                } else if (gameCardSuit == myCardSuit) {
+                  if (gameCardValue >= 100) {
+                    attackStack += (gameCardValue / 100).round();
+                    gameDeck.add(playerDeck.removeAt(i));
+                  } else if (myCardValue > 10) {
+                    gameDeck.add(playerDeck.removeAt(i));
+                  } else if ((gameCardValue - myCardValue) >= -1 &&
+                      (gameCardValue - myCardValue) <= 1) {
+                    gameDeck.add(playerDeck.removeAt(i));
+                  }
+                } else if (myCardValue == 500) {
+                  if (gameCardSuit == "clubs" || gameCardSuit == "spades") {
+                    attackStack += 5;
+                    gameDeck.add(playerDeck.removeAt(i));
+                  }
+                } else if (myCardValue == 700) {
+                  if (gameCardSuit == "hearts" || gameCardSuit == "diamonds") {
+                    attackStack += 7;
+                    gameDeck.add(playerDeck.removeAt(i));
+                  }
+                }
+                debugPrint(attackStack.toString());
+                setState(() {});
+              },
+        child: PlayingCardView(
+          card: playerDeck[i],
+          showBack: showBack,
+          elevation: 3.0,
+          shape: shape,
+          style: myCardStyles,
+        ),
+      ));
+    }
+    return cardWidgetList;
+  }
+
+  Widget playerCardDeck(List<PlayingCard> cardDeck, bool showBack) {
+    return FlatCardFan(
+      children: myDeck(cardDeck, showBack),
+    );
   }
 }
