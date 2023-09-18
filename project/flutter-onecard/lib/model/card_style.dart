@@ -45,3 +45,7 @@ ShapeBorder shape = RoundedRectangleBorder(
   borderRadius: BorderRadius.circular(4),
   side: const BorderSide(color: Color.fromARGB(255, 187, 187, 187), width: 1),
 );
+ShapeBorder avalShape = RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(4),
+  side: const BorderSide(color: Color.fromARGB(255, 107, 30, 30), width: 1),
+);

@@ -3,12 +3,10 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:onecard/model/card_style.dart';
 import 'package:onecard/model/user.dart';
-import 'package:onecard/module/btn_elevated.dart';
 import 'package:onecard/module/btn_elevated_func.dart';
 import 'package:onecard/module/game_helper.dart';
 import 'package:onecard/module/on_back_key.dart';
-import 'package:onecard/module/text_outline.dart';
-import 'package:onecard/pages/main_page.dart';
+import 'package:onecard/ui_models/timer_manager.dart';
 import 'package:playing_cards/playing_cards.dart';
 
 class GamePage extends StatefulWidget {
@@ -26,84 +24,33 @@ class _GamePageState extends State<GamePage> {
   List<PlayingCard> playerDeck = [];
   List<PlayingCard> computerDeck = [];
   List<PlayingCard> gameDeck = [];
+
   int attackStack = 0;
+  bool turn = true;
+  bool gameEnd = false;
+  bool playerTurn = false;
+  bool computerTurn = false;
+
+  int seconds = 20;
+  bool isRunning = false;
 
   @override
   void initState() {
-    deck.shuffle();
-    Timer(const Duration(milliseconds: 0), () {
-      showDialog(
-        context: context,
-        barrierColor: const Color.fromARGB(79, 255, 255, 255),
-        barrierDismissible: true,
-        builder: (context) {
-          Future.delayed(const Duration(seconds: 2), () {
-            Navigator.pop(context);
-            showDialog(
-              context: context,
-              barrierColor: const Color.fromARGB(79, 255, 255, 255),
-              barrierDismissible: true,
-              builder: (context) {
-                Future.delayed(const Duration(seconds: 2), () {});
-                return Dialog(
-                  elevation: 0,
-                  backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        textOutline(
-                          textValue: "COMPUTER",
-                          fontSize: 40,
-                          innerColor: const Color.fromARGB(255, 228, 146, 146),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(30.0),
-                          child: textOutline(
-                              textValue: "VS",
-                              fontSize: 60,
-                              innerColor: Colors.amber),
-                        ),
-                        textOutline(
-                          textValue: widget.player?.nickname ?? "unknown",
-                          fontSize: 40,
-                          innerColor: const Color.fromARGB(255, 157, 168, 243),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          });
-          return Dialog(
-            elevation: 0,
-            backgroundColor: const Color.fromARGB(0, 255, 255, 255),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  textOutline(textValue: "CARSINO", fontSize: 60),
-                  textOutline(
-                      textValue: "ONECARD",
-                      fontSize: 30,
-                      innerColor: Colors.amber),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    });
+    turn = GameHelper().gameStart(
+      context: context,
+      boardDeck: gameDeck,
+      computerDeck: computerDeck,
+      deck: deck,
+      playerDeck: playerDeck,
+      nickname: widget.player?.nickname,
+    );
 
-    for (int i = 0; i < 7; i++) {
-      playerDeck.add(deck.removeAt(0));
-    }
-    for (int i = 0; i < 7; i++) {
-      computerDeck.add(deck.removeAt(0));
-    }
-    gameDeck.add(deck.removeAt(0));
+    debugPrint("누가먼저? $turn");
+
     super.initState();
+    // while (true) {
+    //   return;
+    // }
   }
 
   @override
@@ -189,8 +136,9 @@ class _GamePageState extends State<GamePage> {
                           ),
                         ),
                       ),
-                      elevatedBtn(context,
-                          btnText: "OneCard", width: 180, fontSize: 20),
+                      // elevatedBtn(context,
+                      //     btnText: "OneCard", width: 180, fontSize: 20),
+                      TimerPage(seconds: seconds, isRunning: isRunning),
                       SizedBox(
                         height: 100,
                         child: PlayingCardView(
@@ -219,63 +167,65 @@ class _GamePageState extends State<GamePage> {
 
   List<Widget> myDeck(List<PlayingCard> playerDeck, bool showBack) {
     List<Widget> cardWidgetList = [];
-    for (int i = 0; i < playerDeck.length; i++) {
-      cardWidgetList.add(GestureDetector(
-        onTap: showBack
-            ? () {}
-            : () {
-                // debugPrint(
-                //     "1111111111${playerDeck.removeAt(i).suit.toString()}");
-                int gameCardValue = GameHelper().stringToNumber(
-                    gameDeck[gameDeck.length - 1]
-                        .value
-                        .toString()
-                        .split(".")[1]);
-                String gameCardSuit =
-                    gameDeck[gameDeck.length - 1].suit.toString().split(".")[1];
-                int myCardValue = GameHelper().stringToNumber(
-                    playerDeck[i].value.toString().split(".")[1]);
-                String myCardSuit = playerDeck[i].suit.toString().split(".")[1];
-                debugPrint("2222222222$myCardSuit");
 
-                if (gameCardValue == myCardValue) {
-                  if (gameCardValue >= 100) {
-                    attackStack += (gameCardValue / 100).round();
-                  }
-                  gameDeck.add(playerDeck.removeAt(i));
-                } else if (gameCardSuit == myCardSuit) {
-                  if (gameCardValue >= 100) {
-                    attackStack += (gameCardValue / 100).round();
-                    gameDeck.add(playerDeck.removeAt(i));
-                  } else if (myCardValue > 10) {
-                    gameDeck.add(playerDeck.removeAt(i));
-                  } else if ((gameCardValue - myCardValue) >= -1 &&
-                      (gameCardValue - myCardValue) <= 1) {
-                    gameDeck.add(playerDeck.removeAt(i));
-                  }
-                } else if (myCardValue == 500) {
-                  if (gameCardSuit == "clubs" || gameCardSuit == "spades") {
-                    attackStack += 5;
-                    gameDeck.add(playerDeck.removeAt(i));
-                  }
-                } else if (myCardValue == 700) {
-                  if (gameCardSuit == "hearts" || gameCardSuit == "diamonds") {
-                    attackStack += 7;
-                    gameDeck.add(playerDeck.removeAt(i));
-                  }
-                }
-                debugPrint(attackStack.toString());
-                setState(() {});
-              },
-        child: PlayingCardView(
-          card: playerDeck[i],
-          showBack: showBack,
-          elevation: 3.0,
-          shape: shape,
-          style: myCardStyles,
+    for (int i = 0; i < playerDeck.length; i++) {
+      bool isAble = false;
+      int gameCardValue = GameHelper().stringToNumber(
+          gameDeck[gameDeck.length - 1].value.toString().split(".")[1]);
+      String gameCardSuit =
+          gameDeck[gameDeck.length - 1].suit.toString().split(".")[1];
+      int myCardValue = GameHelper()
+          .stringToNumber(playerDeck[i].value.toString().split(".")[1]);
+      String myCardSuit = playerDeck[i].suit.toString().split(".")[1];
+      debugPrint("2222222222$myCardSuit");
+
+      if (gameCardValue == myCardValue) {
+        isAble = true;
+      } else if (gameCardSuit == myCardSuit) {
+        if (gameCardValue >= 100 ||
+            myCardValue > 10 ||
+            ((gameCardValue - myCardValue) >= -1 &&
+                (gameCardValue - myCardValue) <= 1)) {
+          isAble = true;
+        }
+      } else if (myCardValue == 500) {
+        if (gameCardSuit == "clubs" || gameCardSuit == "spades") {
+          isAble = true;
+        }
+      } else if (myCardValue == 700) {
+        if (gameCardSuit == "hearts" || gameCardSuit == "diamonds") {
+          isAble = true;
+        }
+      }
+
+      cardWidgetList.add(
+        Container(
+          decoration: isAble || showBack
+              ? null
+              : BoxDecoration(
+                  shape: BoxShape.rectangle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color.fromARGB(255, 173, 173, 173)
+                          .withOpacity(1),
+                      blurRadius: 7.0,
+                      spreadRadius: 1.0,
+                      offset: const Offset(3, 7),
+                    )
+                  ],
+                  // color: const Color.fromARGB(255, 163, 132, 132),
+                ),
+          child: PlayingCardView(
+            card: playerDeck[i],
+            showBack: showBack,
+            elevation: 3.0,
+            shape: isAble || showBack ? avalShape : shape,
+            style: myCardStyles,
+          ),
         ),
-      ));
+      );
     }
+
     return cardWidgetList;
   }
 
