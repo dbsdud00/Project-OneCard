@@ -40,7 +40,7 @@ class AuthManage {
               .set({
             "email": email,
             "nickname": nickname,
-            "money": 0,
+            "money": 1000,
           });
           return true;
         }
@@ -56,7 +56,7 @@ class AuthManage {
         throw const MyException("another firebaseAuthException");
       }
     } catch (e) {
-      throw e.toString();
+      throw const MyException("fail_validation");
     }
     // authPersistence(); // 인증 영속
     return false;
@@ -65,21 +65,23 @@ class AuthManage {
   /// 로그인
   static Future<bool> signIn(String email, String pw) async {
     try {
-      var result = await FirebaseAuth.instance.signInWithEmailAndPassword(
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email,
         password: pw,
       );
+      return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         throw const MyException('없는 계정입니다.');
       } else if (e.code == 'wrong-password') {
         throw const MyException('비밀번호가 틀렸습니다.');
+      } else {
+        throw MyException(e.toString());
       }
     } catch (e) {
       throw MyException(e.toString());
     }
     // authPersistence(); // 인증 영속
-    return true;
   }
 
   /// 로그아웃

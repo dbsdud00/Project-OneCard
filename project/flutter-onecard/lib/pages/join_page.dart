@@ -1,8 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onecard/module/input_form_field.dart';
 import 'package:onecard/module/text_outline.dart';
+import 'package:onecard/module/toast.dart';
 import 'package:onecard/module/validate.dart';
 import 'package:onecard/ui_models/auth_manager.dart';
 
@@ -23,6 +23,16 @@ class _JoinPageState extends State<JoinPage> {
   String _passwordValue = "";
   String _rePasswordValue = "";
   String _nickNameValue = "";
+  late FToast fToast;
+
+  @override
+  void initState() {
+    super.initState();
+    fToast = FToast();
+    // if you want to use context from globally instead of content we need to pass navigatorKey.currentContext!
+    fToast.init(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -147,15 +157,13 @@ class _JoinPageState extends State<JoinPage> {
             debugPrint("-------회원가입 결과-----------$joinResult");
             // widget.updateAuthUser(result.user);
             // email, password 이외의 회원정보를 저장하려면 fireStore 에 저장을 해주어야 한다.
-
             if (joinResult) {
+              customToast("회원가입이 완료되었습니다.", fToast);
               if (!mounted) return;
               Navigator.pop(context);
             }
           } catch (e) {
-            if (!mounted) return;
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(e.toString())));
+            customToast(e.toString(), fToast);
           }
         },
         child: const SizedBox(

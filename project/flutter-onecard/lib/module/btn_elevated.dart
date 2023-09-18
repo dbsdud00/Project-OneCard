@@ -6,7 +6,7 @@ Widget elevatedBtn(
   required String btnText,
   Color? bgColor,
   Color? textColor,
-  Widget? page,
+  Widget? onPressed,
   double? width,
   double? height,
   double? fontSize,
@@ -17,12 +17,8 @@ Widget elevatedBtn(
       width: width ?? 280,
       height: height ?? 70,
       child: ElevatedButton(
-        onPressed: () {
-          // debugPrint("구글로그인 탭");
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => page ?? const StartPage(),
-          ));
-        },
+        onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => onPressed ?? const StartPage())),
         style: ElevatedButton.styleFrom(
           backgroundColor: bgColor ?? const Color.fromARGB(255, 255, 124, 124),
         ),
