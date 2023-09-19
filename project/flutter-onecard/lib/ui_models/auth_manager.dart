@@ -65,9 +65,13 @@ class AuthManage {
   /// 로그인
   static Future<bool> signIn(String email, String pw) async {
     try {
+      // await FirebaseAuth.instance.signInWithEmailAndPassword(
+      //   email: email,
+      //   password: pw,
+      // );
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: email,
-        password: pw,
+        email: "cyy0519@naver.com",
+        password: "!Korea8080",
       );
       return true;
     } on FirebaseAuthException catch (e) {

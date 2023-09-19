@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:onecard/model/card_dto.dart';
 import 'package:onecard/module/show_dialog.dart';
 import 'package:onecard/module/text_outline.dart';
 import 'package:playing_cards/playing_cards.dart';
@@ -9,7 +10,7 @@ class GameHelper {
   int stringToNumber(String strNum) {
     switch (strNum) {
       case "two":
-        return 2;
+        return 200;
       case "three":
         return 3;
       case "four":
@@ -33,7 +34,7 @@ class GameHelper {
       case "king":
         return 16;
       case "ace":
-        return 1;
+        return 400;
       case "joker_1":
         return 500;
       case "joker_2":
@@ -43,18 +44,33 @@ class GameHelper {
     }
   }
 
+  void drawCardInDeck({
+    required List<PlayingCard> deck,
+    required List<CardDto> gameDeck,
+    required List<CardDto> targetDeck,
+  }) {
+    PlayingCard tempCard = deck.removeAt(0);
+    targetDeck.add(CardDto(card: tempCard));
+    if (deck.length < 5) {
+      for (int i = 0; i < gameDeck.length - 2; i++) {
+        deck.add(gameDeck.removeAt(0).card);
+      }
+      debugPrint("덱 추가");
+    }
+  }
+
   bool gameStart({
     required BuildContext context,
     required List<PlayingCard> deck,
-    required List<PlayingCard> computerDeck,
-    required List<PlayingCard> playerDeck,
-    required List<PlayingCard> boardDeck,
+    required List<CardDto> computerDeck,
+    required List<CardDto> playerDeck,
+    required List<CardDto> boardDeck,
     required String? nickname,
   }) {
     bool turn = true;
     deck.shuffle();
-    boardDeck.add(deck.removeAt(0));
-    boardDeck.add(deck.removeAt(0));
+    drawCardInDeck(deck: deck, targetDeck: boardDeck, gameDeck: boardDeck);
+    drawCardInDeck(deck: deck, targetDeck: boardDeck, gameDeck: boardDeck);
 
     Timer(const Duration(milliseconds: 0), () {
       showDialog(
@@ -128,10 +144,10 @@ class GameHelper {
     });
 
     for (int i = 0; i < 7; i++) {
-      playerDeck.add(deck.removeAt(0));
+      drawCardInDeck(deck: deck, targetDeck: playerDeck, gameDeck: boardDeck);
     }
     for (int i = 0; i < 7; i++) {
-      computerDeck.add(deck.removeAt(0));
+      drawCardInDeck(deck: deck, targetDeck: computerDeck, gameDeck: boardDeck);
     }
 
     return turn;

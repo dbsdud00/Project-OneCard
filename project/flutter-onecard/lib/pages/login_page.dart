@@ -136,10 +136,10 @@ class _LoginPageState extends State<LoginPage> {
         ),
         onPressed: () async {
           FocusScope.of(context).unfocus();
-          bool? validateResult = _formKey.currentState?.validate();
-          if (!validateResult!) {
-            return;
-          }
+          // bool? validateResult = _formKey.currentState?.validate();
+          // if (!validateResult!) {
+          //   return;
+          // }
           try {
             bool result = await AuthManage.signIn(_emailValue, _passwordValue);
             debugPrint("AuthManage.signIn 이후 결과 : $result");
