@@ -45,10 +45,10 @@ class _MainPageState extends State<MainPage> {
         int moneyTemp = player.money!;
         if (widget.gameResult!) {
           player.money = moneyTemp + 1000;
-          customToast("승리(1000\$를 얻었습니다)", fToast);
+          customToast("승리(1000\$)를 \n얻었습니다", fToast);
         } else {
           player.money = moneyTemp - 1000;
-          customToast("패배(1000\$를 잃었습니다.)", fToast);
+          customToast("패배(1000\$)를 \n잃었습니다.", fToast);
         }
       }
       if (player.money! < 1000) {
