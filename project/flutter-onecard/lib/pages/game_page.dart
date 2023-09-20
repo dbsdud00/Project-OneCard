@@ -108,6 +108,7 @@ Navigator.of(context).pushedNamed("/mypage");
       if (computerDeck.isEmpty) {
         debugPrint("패배");
         gameResult(context: context, result: false);
+
         // Navigator.of(context).pushNamed(
         //   "/main",
         //   arguments: {
