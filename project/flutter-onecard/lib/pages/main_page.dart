@@ -13,7 +13,8 @@ import 'package:onecard/pages/rank_page.dart';
 import 'package:onecard/pages/start_page.dart';
 
 class MainPage extends StatefulWidget {
-  const MainPage({super.key});
+  const MainPage({super.key, this.gameResult});
+  final bool? gameResult;
 
   @override
   State<MainPage> createState() => _MainPageState();
@@ -27,6 +28,7 @@ class _MainPageState extends State<MainPage> {
     final usercol =
         FirebaseFirestore.instance.collection("user").doc(authUser!.uid);
     var checking = await usercol.get(); //받아오는 방식이므로 await필요(아래거 실행늦게 하게 하려면)
+
     if (checking.exists) {
       //존재성 확인하는 부분.
       await usercol.get().then((value) => {
@@ -36,16 +38,24 @@ class _MainPageState extends State<MainPage> {
           });
       debugPrint("플레이어닉네임 : ${player.nickname}");
       debugPrint("플레이어 돈 : ${player.money}");
+      if (widget.gameResult != null) {
+        int moneyTemp = player.money!;
+        if (widget.gameResult!) {
+          player.money = moneyTemp + 1000;
+        } else {
+          player.money = moneyTemp - 1000;
+        }
+      }
       if (player.money! < 1000) {
         debugPrint("돈없음");
-        await firestore.runTransaction((transaction) async {
-          transaction.update(usercol, {"money": 1000});
-          player.money = 1000;
-        }).then(
-          (value) => debugPrint("충전됨"),
-          onError: (e) => debugPrint("Error updating document $e"),
-        );
+        player.money = 1000;
       }
+      await firestore.runTransaction((transaction) async {
+        transaction.update(usercol, {"money": player.money});
+      }).then(
+        (value) => debugPrint("충전됨"),
+        onError: (e) => debugPrint("Error updating document $e"),
+      );
       setState(() {});
     } else {
       if (!mounted) return;
@@ -117,7 +127,7 @@ class _MainPageState extends State<MainPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      player.nickname!,
+                      player.nickname ?? "none",
                       style: const TextStyle(
                           fontSize: 30,
                           color: Color.fromARGB(255, 53, 80, 255)),
@@ -194,7 +204,7 @@ class _MainPageState extends State<MainPage> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      "${player.money!}\$",
+                      "${player.money ?? 0}\$",
                       style: const TextStyle(
                           fontSize: 30,
                           color: Color.fromARGB(255, 212, 163, 17)),
@@ -203,7 +213,7 @@ class _MainPageState extends State<MainPage> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
                 child: Column(
                   children: [
                     const Padding(
@@ -216,31 +226,39 @@ class _MainPageState extends State<MainPage> {
                     Container(
                       color: Colors.white,
                       width: 300,
-                      height: 330,
                       child: Column(
                         children: [
-                          rank(
-                            rank: 1,
-                            userName: "test01",
-                            money: 10000,
-                            rankColor: const Color.fromARGB(255, 212, 163, 17),
-                            fontSize: 35,
+                          SizedBox(
+                            height: 300,
+                            child: StreamBuilder(
+                              stream: firestore
+                                  .collection('user')
+                                  .orderBy('money', descending: true)
+                                  .limit(5)
+                                  .snapshots(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                } else {
+                                  return ListView.builder(
+                                    itemCount: snapshot.data!.docs.length,
+                                    itemBuilder: (context, index) {
+                                      return rank(
+                                        rank: index + 1,
+                                        userName: snapshot.data!.docs[index]
+                                            ['nickname'],
+                                        money: snapshot.data!.docs[index]
+                                            ['money'],
+                                      );
+                                    },
+                                  );
+                                }
+                              },
+                            ),
                           ),
-                          rank(
-                            rank: 2,
-                            userName: "test02",
-                            money: 5000,
-                            rankColor: const Color.fromARGB(255, 144, 144, 144),
-                            fontSize: 32,
-                          ),
-                          rank(
-                              rank: 3,
-                              userName: "test02",
-                              money: 5000,
-                              rankColor: const Color.fromARGB(255, 116, 95, 83),
-                              fontSize: 30),
-                          rank(rank: 4, userName: "test02", money: 5000),
-                          rank(rank: 5, userName: "test02", money: 5000),
                           GestureDetector(
                             onTap: () {
                               // getUser();
@@ -248,11 +266,14 @@ class _MainPageState extends State<MainPage> {
                                 builder: (context) => const RankPage(),
                               ));
                             },
-                            child: const Text("more ▼"),
+                            child: const Text(
+                              "more ▼",
+                              style: TextStyle(fontSize: 20),
+                            ),
                           ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               )

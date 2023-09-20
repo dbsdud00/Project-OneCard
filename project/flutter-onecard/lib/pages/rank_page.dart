@@ -1,5 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:onecard/model/user.dart';
 import 'package:onecard/module/rank_list_item.dart';
 import 'package:onecard/module/text_outline.dart';
 
@@ -11,22 +11,6 @@ class RankPage extends StatefulWidget {
 }
 
 class _RankPageState extends State<RankPage> {
-  final List<GameUser> rankList = [
-    GameUser(nickname: "test01", money: 1005),
-    GameUser(nickname: "test02", money: 1004),
-    GameUser(nickname: "test03", money: 1003),
-    GameUser(nickname: "test04", money: 1002),
-    GameUser(nickname: "test05", money: 1001),
-    GameUser(nickname: "test06", money: 1000),
-    GameUser(nickname: "test05", money: 1001),
-    GameUser(nickname: "test06", money: 1000),
-    GameUser(nickname: "test05", money: 1001),
-    GameUser(nickname: "test06", money: 1000),
-    GameUser(nickname: "test05", money: 1001),
-    GameUser(nickname: "test06", money: 1000),
-    GameUser(nickname: "test05", money: 1001),
-    GameUser(nickname: "test06", money: 1000),
-  ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -40,20 +24,23 @@ class _RankPageState extends State<RankPage> {
         backgroundColor: const Color.fromARGB(0, 0, 0, 0),
         body: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(0, 80, 0, 30),
-              child: Center(
-                child: Column(
-                  children: [
-                    textOutline(
-                        textValue: "CASINO",
-                        fontSize: 64,
-                        innerColor: const Color.fromARGB(255, 212, 163, 17)),
-                    textOutline(
-                        textValue: "OneCard",
-                        fontSize: 24,
-                        innerColor: const Color.fromARGB(255, 220, 220, 220)),
-                  ],
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 80, 0, 30),
+                child: Center(
+                  child: Column(
+                    children: [
+                      textOutline(
+                          textValue: "CASINO",
+                          fontSize: 64,
+                          innerColor: const Color.fromARGB(255, 212, 163, 17)),
+                      textOutline(
+                          textValue: "OneCard",
+                          fontSize: 24,
+                          innerColor: const Color.fromARGB(255, 220, 220, 220)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -74,19 +61,31 @@ class _RankPageState extends State<RankPage> {
                       color: Colors.white,
                       width: double.infinity,
                       height: 500,
-                      child: ListView.builder(
-                        itemCount: rankList.length,
-                        itemBuilder: (context, index) => rank(
-                            rank: index + 1,
-                            userName: rankList[index].nickname!,
-                            money: rankList[index].money!,
-                            rankColor: index == 0
-                                ? const Color.fromARGB(255, 212, 163, 17)
-                                : (index == 1
-                                    ? const Color.fromARGB(255, 144, 144, 144)
-                                    : (index == 2
-                                        ? const Color.fromARGB(255, 116, 95, 83)
-                                        : null))),
+                      child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('user')
+                            .orderBy('money', descending: true)
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return ListView.builder(
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (context, index) {
+                                return rank(
+                                  rank: index + 1,
+                                  userName: snapshot.data!.docs[index]
+                                      ['nickname'],
+                                  money: snapshot.data!.docs[index]['money'],
+                                );
+                              },
+                            );
+                          }
+                        },
                       ),
                     )
                   ],

@@ -5,6 +5,7 @@ Future<bool> onBackKey({
   String? title,
   Function()? yes,
   Function()? no,
+  List<Widget>? actions,
   Color? bgColor,
 }) async {
   return await showDialog(
@@ -16,15 +17,16 @@ Future<bool> onBackKey({
           title ?? "끝낼까요?",
           style: TextStyle(color: bgColor ?? Colors.blueAccent),
         ),
-        actions: [
-          TextButton(
-              onPressed: yes ?? () => Navigator.pop(context, true),
-              child: const Text('네')),
-          TextButton(
-            onPressed: no ?? () => Navigator.pop(context, false),
-            child: const Text("아니요"),
-          )
-        ],
+        actions: actions ??
+            [
+              TextButton(
+                  onPressed: yes ?? () => Navigator.pop(context, true),
+                  child: const Text('네')),
+              TextButton(
+                onPressed: no ?? () => Navigator.pop(context, false),
+                child: const Text("아니요"),
+              )
+            ],
       );
     },
   );

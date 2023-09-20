@@ -9,6 +9,7 @@ import 'package:onecard/model/user.dart';
 import 'package:onecard/module/btn_elevated_func.dart';
 import 'package:onecard/module/game_helper.dart';
 import 'package:onecard/module/on_back_key.dart';
+import 'package:onecard/module/show_dialog.dart';
 import 'package:playing_cards/playing_cards.dart';
 
 class GamePage extends StatefulWidget {
@@ -54,6 +55,7 @@ class _GamePageState extends State<GamePage> {
                   deck: deck, targetDeck: playerDeck, gameDeck: gameDeck);
             }
             _stopTimer();
+            drawDeck = [];
           }
         });
       });
@@ -64,7 +66,6 @@ class _GamePageState extends State<GamePage> {
     isRunning = false;
     _timer.cancel();
 
-    drawDeck = [];
     playerTurn = false;
     seconds = 20;
     setState(() {});
@@ -87,42 +88,61 @@ class _GamePageState extends State<GamePage> {
 
   @override
   Widget build(BuildContext context) {
-    Timer(const Duration(milliseconds: 2000), () {
-      try {
-        avalCardRendering(playerDeck: playerDeck, showBack: false);
-        avalCardRendering(playerDeck: computerDeck, showBack: true);
-        if (playerTurn) {
-          _startTimer();
-        } else {
-          _stopTimer();
-          debugPrint("컴퓨터 턴");
+    Future.delayed(const Duration(milliseconds: 2000), () {
+      if (computerDeck.isEmpty) {
+        debugPrint("패배");
+        gameResult(context: context, result: false);
+      } else if (computerDeck.length > 20) {
+        gameResult(context: context, result: true);
+      }
+      if (playerDeck.isEmpty) {
+        debugPrint("승리");
+        gameResult(context: context, result: true);
+      } else if (playerDeck.length > 20) {
+        gameResult(context: context, result: false);
+      } else {
+        try {
+          debugPrint("남은 카드 개수 : ${deck.length}");
 
-          if (computerAvalDeck.isEmpty) {
-            if (drawDeck.isEmpty) {
-              GameHelper().drawCardInDeck(
-                  deck: deck, targetDeck: computerDeck, gameDeck: gameDeck);
-            }
-            drawDeck = [];
-            playerTurn = true;
+          avalCardRendering(playerDeck: playerDeck, showBack: false);
+          avalCardRendering(playerDeck: computerDeck, showBack: true);
+          if (playerTurn) {
+            _startTimer();
           } else {
-            avalCardRendering(playerDeck: computerDeck, showBack: true);
-            debugPrint("컴퓨터 낼수있는 카드 개수 : ${computerAvalDeck.length}");
-            for (int i = 0; i < computerAvalDeck.length; i++) {
-              debugPrint(
-                  "컴퓨터가 낼수있는 카드 : ${computerAvalDeck[i].card.suit.toString().split(".")[1]}/${computerAvalDeck[i].card.value.toString().split(".")[1]}");
+            _stopTimer();
+            debugPrint("컴퓨터 턴");
+
+            if (computerAvalDeck.isEmpty) {
+              if (drawDeck.isEmpty) {
+                GameHelper().drawCardInDeck(
+                    deck: deck, targetDeck: computerDeck, gameDeck: gameDeck);
+              }
+              drawDeck = [];
+              playerTurn = true;
+            } else {
+              Future.delayed(const Duration(milliseconds: 100), () async {
+                avalCardRendering(playerDeck: computerDeck, showBack: true);
+                debugPrint("컴퓨터 낼수있는 카드 개수 : ${computerAvalDeck.length}");
+                for (int i = 0; i < computerAvalDeck.length; i++) {
+                  debugPrint(
+                      "컴퓨터가 낼수있는 카드 : ${computerAvalDeck[i].card.suit.toString().split(".")[1]}/${computerAvalDeck[i].card.value.toString().split(".")[1]}");
+                }
+                int cNum = Random().nextInt(computerAvalDeck.length) + 1;
+                debugPrint(
+                    "컴퓨터 선택한 카드 : ${computerAvalDeck[cNum].card.suit}/${computerAvalDeck[cNum].card.value.toString().split(".")[1]}");
+                drawDeck.add(computerDeck[computerAvalDeck[cNum].index]);
+                gameDeck
+                    .add(computerDeck.removeAt(computerAvalDeck[cNum].index));
+                computerAvalDeck = [];
+              });
             }
-            int cNum = Random().nextInt(computerAvalDeck.length) + 1;
-            debugPrint(
-                "컴퓨터 선택한 카드 : ${computerAvalDeck[cNum].card.suit}/${computerAvalDeck[cNum].card.value.toString().split(".")[1]}");
-            drawDeck.add(computerDeck[computerAvalDeck[cNum].index]);
-            gameDeck.add(computerDeck.removeAt(computerAvalDeck[cNum].index));
-            computerAvalDeck = [];
           }
+        } catch (e) {
+          debugPrint(e.toString());
         }
-      } catch (e) {
-        debugPrint(e.toString());
       }
     });
+
     return WillPopScope(
       onWillPop: () => onBackKey(
         context: context,
@@ -184,6 +204,16 @@ class _GamePageState extends State<GamePage> {
                   width: 400,
                   child: playerCardDeck(computerDeck, true),
                 ),
+                Text("${computerDeck.length}",
+                    style: computerDeck.length > 15
+                        ? const TextStyle(color: Colors.red)
+                        : const TextStyle(color: Colors.black)),
+                GestureDetector(
+                    onTap: () {
+                      computerDeck = [];
+                      setState(() {});
+                    },
+                    child: const Text("패배하기")),
                 Center(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -215,6 +245,7 @@ class _GamePageState extends State<GamePage> {
                       ),
                       // elevatedBtn(context,
                       //     btnText: "OneCard", width: 180, fontSize: 20),
+
                       Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -233,6 +264,7 @@ class _GamePageState extends State<GamePage> {
                                             gameDeck: gameDeck);
                                       }
                                       _stopTimer();
+                                      drawDeck = [];
                                     }
                                   : null,
                               child: const Text('턴 넘기기'),
@@ -253,6 +285,17 @@ class _GamePageState extends State<GamePage> {
                     ],
                   ),
                 ),
+                GestureDetector(
+                    onTap: () {
+                      playerDeck = [];
+
+                      setState(() {});
+                    },
+                    child: const Text("승리하기")),
+                Text("${playerDeck.length}",
+                    style: playerDeck.length > 15
+                        ? const TextStyle(color: Colors.red)
+                        : const TextStyle(color: Colors.black)),
                 SizedBox(
                   height: 150,
                   width: 400,

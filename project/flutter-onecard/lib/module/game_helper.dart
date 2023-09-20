@@ -55,6 +55,7 @@ class GameHelper {
       for (int i = 0; i < gameDeck.length - 2; i++) {
         deck.add(gameDeck.removeAt(0).card);
       }
+      deck.shuffle();
       debugPrint("덱 추가");
     }
   }
