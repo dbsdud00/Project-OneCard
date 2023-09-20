@@ -79,14 +79,14 @@ class GameHelper {
         barrierColor: const Color.fromARGB(79, 255, 255, 255),
         barrierDismissible: true,
         builder: (context) {
-          Future.delayed(const Duration(milliseconds: 500), () {
+          Future.delayed(const Duration(milliseconds: 1000), () {
             Navigator.pop(context);
             showDialog(
               context: context,
               barrierColor: const Color.fromARGB(79, 255, 255, 255),
               barrierDismissible: true,
               builder: (context) {
-                Future.delayed(const Duration(milliseconds: 500), () async {
+                Future.delayed(const Duration(milliseconds: 1000), () async {
                   Navigator.pop(context);
                   turn = await showDialogBasic(
                     context: context,

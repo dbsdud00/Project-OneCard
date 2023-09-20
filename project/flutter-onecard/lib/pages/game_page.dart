@@ -122,14 +122,13 @@ Navigator.of(context).pushedNamed("/mypage");
       try {
         debugPrint("남은 카드 개수 : ${deck.length}");
 
-        avalCardRendering(playerDeck: playerDeck, showBack: false);
-        avalCardRendering(playerDeck: computerDeck, showBack: true);
         if (playerTurn) {
+          avalCardRendering(playerDeck: playerDeck, showBack: false);
           _startTimer();
         } else {
+          avalCardRendering(playerDeck: computerDeck, showBack: true);
           _stopTimer();
           debugPrint("컴퓨터 턴");
-          avalCardRendering(playerDeck: computerDeck, showBack: true);
           if (attackMode && computerAvalDeck.isEmpty) {
             for (int i = 0; i < attackStack; i++) {
               GameHelper().drawCardInDeck(
@@ -486,16 +485,18 @@ Navigator.of(context).pushedNamed("/mypage");
         }
       } else {
         // attack mode
-        if (gameCardValue == myCardValue) {
-          playerDeck[i].avalCard = true;
-        } else if (gameCardSuit == myCardSuit) {
-          if (myCardValue > 100) {
-            if (gameCardValue <= myCardValue) {
-              playerDeck[i].avalCard = true;
+        if (playerDeck[i].isAtack) {
+          if (gameCardValue == myCardValue) {
+            playerDeck[i].avalCard = true;
+          } else if (gameCardSuit == myCardSuit) {
+            if (myCardValue > 100) {
+              if (gameCardValue <= myCardValue) {
+                playerDeck[i].avalCard = true;
+              }
             }
+          } else {
+            playerDeck[i].avalCard = false;
           }
-        } else {
-          playerDeck[i].avalCard = false;
         }
       }
       if (showBack) {
