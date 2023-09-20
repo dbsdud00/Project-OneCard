@@ -51,12 +51,14 @@ class _GamePageState extends State<GamePage> {
             seconds--;
           } else {
             playerTurn = false;
-            if (attackMode || drawDeck.isEmpty) {
+            if (attackMode && drawDeck.isEmpty) {
               for (int i = 0; i < attackStack; i++) {
                 GameHelper().drawCardInDeck(
                     deck: deck, targetDeck: playerDeck, gameDeck: gameDeck);
               }
               attackMode = false;
+              debugPrint("어택모드 해제");
+              attackStack = 0;
             }
             if (drawDeck.isEmpty) {
               GameHelper().drawCardInDeck(
@@ -127,12 +129,14 @@ Navigator.of(context).pushedNamed("/mypage");
         } else {
           _stopTimer();
           debugPrint("컴퓨터 턴");
+          avalCardRendering(playerDeck: computerDeck, showBack: true);
           if (attackMode && computerAvalDeck.isEmpty) {
             for (int i = 0; i < attackStack; i++) {
               GameHelper().drawCardInDeck(
                   deck: deck, targetDeck: computerDeck, gameDeck: gameDeck);
             }
             attackMode = false;
+            debugPrint("어택모드 해제");
           } else if (computerAvalDeck.isEmpty) {
             if (drawDeck.isEmpty) {
               GameHelper().drawCardInDeck(
@@ -142,8 +146,6 @@ Navigator.of(context).pushedNamed("/mypage");
             playerTurn = true;
           } else {
             Future.delayed(const Duration(milliseconds: 100), () async {
-              avalCardRendering(playerDeck: computerDeck, showBack: true);
-
               debugPrint("컴퓨터 낼수있는 카드 개수 : ${computerAvalDeck.length}");
               for (int i = 0; i < computerAvalDeck.length; i++) {
                 debugPrint(
@@ -283,7 +285,9 @@ Navigator.of(context).pushedNamed("/mypage");
                                   child: textOutline(
                                       textValue: "$attackStack",
                                       fontSize: 30,
-                                      innerColor: Colors.red)),
+                                      innerColor: attackMode
+                                          ? Colors.red
+                                          : Colors.white)),
                             )
                           ],
                         ),
@@ -310,6 +314,8 @@ Navigator.of(context).pushedNamed("/mypage");
                                               gameDeck: gameDeck);
                                         }
                                         attackMode = false;
+                                        debugPrint("어택모드 해제");
+                                        attackStack = 0;
                                       } else if (drawDeck.isEmpty) {
                                         GameHelper().drawCardInDeck(
                                             deck: deck,
@@ -395,6 +401,7 @@ Navigator.of(context).pushedNamed("/mypage");
                   for (int a = 0; a < playerDeck.length; a++) {
                     playerDeck[a].avalCard = false;
                   }
+                  avalCardRendering(playerDeck: playerDeck, showBack: showBack);
                   drawDeck.add(selectCard);
                   setState(() {});
                 },
@@ -482,8 +489,10 @@ Navigator.of(context).pushedNamed("/mypage");
         if (gameCardValue == myCardValue) {
           playerDeck[i].avalCard = true;
         } else if (gameCardSuit == myCardSuit) {
-          if (gameCardValue <= myCardValue) {
-            playerDeck[i].avalCard = true;
+          if (myCardValue > 100) {
+            if (gameCardValue <= myCardValue) {
+              playerDeck[i].avalCard = true;
+            }
           }
         } else {
           playerDeck[i].avalCard = false;
