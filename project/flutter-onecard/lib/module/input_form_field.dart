@@ -8,6 +8,7 @@ Widget inputFormField({
       validator, // String 이 null 일 경우, validator 도 null 일 경우도 있음
   String? hintText,
   String? helpText,
+  bool? obscureText,
 }) {
   return Padding(
     padding: const EdgeInsets.fromLTRB(8, 5, 8, 5),
@@ -15,7 +16,7 @@ Widget inputFormField({
       focusNode: focusNode,
       validator: (value) => validator(value), // validator 는 선택사항임
       onChanged: (value) => setValue(value),
-
+      obscureText: obscureText ?? false,
       decoration: InputDecoration(
         filled: true,
         fillColor: Colors.white,

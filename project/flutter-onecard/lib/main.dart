@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:onecard/firebase_options.dart';
+import 'package:onecard/pages/main_page.dart';
 import 'package:onecard/pages/start_page.dart';
 
 void main() async {
@@ -22,6 +23,9 @@ class App extends StatelessWidget {
       theme: ThemeData(
         fontFamily: 'Yeongdeok',
       ),
+      routes: {
+        "/main": (context) => const MainPage(),
+      },
     );
   }
 }

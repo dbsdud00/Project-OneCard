@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onecard/model/user.dart';
 import 'package:onecard/module/btn_elevated.dart';
 import 'package:onecard/module/btn_elevated_func.dart';
 import 'package:onecard/module/on_back_key.dart';
 import 'package:onecard/module/rank_list_item.dart';
 import 'package:onecard/module/text_outline.dart';
+import 'package:onecard/module/toast.dart';
 import 'package:onecard/pages/game_page.dart';
 import 'package:onecard/pages/login_page.dart';
 import 'package:onecard/pages/rank_page.dart';
@@ -24,6 +26,7 @@ class _MainPageState extends State<MainPage> {
   late User? _authUser;
   final firestore = FirebaseFirestore.instance;
   var player = GameUser();
+  late FToast fToast;
   void getUser(User? authUser) async {
     final usercol =
         FirebaseFirestore.instance.collection("user").doc(authUser!.uid);
@@ -42,13 +45,17 @@ class _MainPageState extends State<MainPage> {
         int moneyTemp = player.money!;
         if (widget.gameResult!) {
           player.money = moneyTemp + 1000;
+          customToast("승리(1000\$를 얻었습니다)", fToast);
         } else {
           player.money = moneyTemp - 1000;
+          customToast("패배(1000\$를 잃었습니다.)", fToast);
         }
       }
       if (player.money! < 1000) {
         debugPrint("돈없음");
+
         player.money = 1000;
+        customToast("가진 돈이 없어 \n 1000\$ 기부 받았습니다.", fToast);
       }
       await firestore.runTransaction((transaction) async {
         transaction.update(usercol, {"money": player.money});
@@ -70,6 +77,17 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     // login 된 사용자 정보를 firebaseAuth 에 요청
+    fToast = FToast();
+    fToast.init(context);
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      // if (widget.gameResult != null) {
+      //   if (widget.gameResult!) {
+      //     customToast("승리(1000\$를 얻었습니다)", fToast);
+      //   } else {
+      //     customToast("패배(1000\$를 잃었습니다.)", fToast);
+      //   }
+      // }
+    });
     _authUser = FirebaseAuth.instance.currentUser;
     getUser(_authUser);
     super.initState();

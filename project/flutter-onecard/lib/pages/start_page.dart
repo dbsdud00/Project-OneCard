@@ -1,14 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onecard/model/user.dart';
 import 'package:onecard/module/btn_elevated.dart';
 import 'package:onecard/module/on_back_key.dart';
 import 'package:onecard/module/text_outline.dart';
 import 'package:onecard/pages/game_page.dart';
 import 'package:onecard/pages/join_page.dart';
 import 'package:onecard/pages/login_page.dart';
-import 'package:onecard/pages/main_page.dart';
 
 class StartPage extends StatefulWidget {
   const StartPage({super.key});

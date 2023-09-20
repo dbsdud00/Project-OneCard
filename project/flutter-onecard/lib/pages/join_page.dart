@@ -101,6 +101,7 @@ class _JoinPageState extends State<JoinPage> {
                         helpText: " ",
                       ),
                       inputFormField(
+                        obscureText: true,
                         focusNode: _passwordFocus,
                         setValue: (value) => _passwordValue = value,
                         validator: (value) => CheckValidate().passwordCheck(
@@ -109,6 +110,7 @@ class _JoinPageState extends State<JoinPage> {
                         hintText: "비밀번호",
                       ),
                       inputFormField(
+                        obscureText: true,
                         focusNode: _rePasswordFocus,
                         setValue: (value) => _rePasswordValue = value,
                         validator: (value) => CheckValidate().rePasswordCheck(

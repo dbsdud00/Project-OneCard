@@ -21,13 +21,17 @@ class AuthManage {
         (querySnapshot) {
           debugPrint("Successfully completed");
           if (querySnapshot.docs.isNotEmpty) {
+            debugPrint("이미있음");
             return false;
           }
+          debugPrint("없음");
           return true;
         },
         onError: (e) => debugPrint("Error completing: $e"),
       );
+      debugPrint(nickResult.toString());
       if (await nickResult) {
+        debugPrint("닉네임 없을 때");
         var credential =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: email,
@@ -45,18 +49,25 @@ class AuthManage {
           return true;
         }
       } else {
-        throw const MyException("중복된 닉네임 입니다.");
+        debugPrint("닉네임 이미 있을 때");
+        throw const MyException("exist_nickname");
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         throw const MyException('The password provided is too weak.');
       } else if (e.code == 'email-already-in-use') {
         throw const MyException('이미 존재하는 이메일 입니다.');
+      } else if (e.code == 'exist_nickname') {
+        throw const MyException('이미 존재하는 닉네임 입니다.');
       } else {
         throw const MyException("another firebaseAuthException");
       }
     } catch (e) {
-      throw const MyException("fail_validation");
+      if (e.toString() == 'exist_nickname') {
+        throw const MyException('이미 존재하는 닉네임 입니다.');
+      } else {
+        throw const MyException("fail_validation");
+      }
     }
     // authPersistence(); // 인증 영속
     return false;
@@ -65,16 +76,17 @@ class AuthManage {
   /// 로그인
   static Future<bool> signIn(String email, String pw) async {
     try {
-      // await FirebaseAuth.instance.signInWithEmailAndPassword(
-      //   email: email,
-      //   password: pw,
-      // );
       await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: "cyy0519@naver.com",
-        password: "!Korea8080",
+        email: email,
+        password: pw,
       );
+      // await FirebaseAuth.instance.signInWithEmailAndPassword(
+      //   email: "cyy0519@naver.com",
+      //   password: "!Korea8080",
+      // );
       return true;
     } on FirebaseAuthException catch (e) {
+      debugPrint("파이어베이스 에러");
       if (e.code == 'user-not-found') {
         throw const MyException('없는 계정입니다.');
       } else if (e.code == 'wrong-password') {
@@ -83,6 +95,7 @@ class AuthManage {
         throw MyException(e.toString());
       }
     } catch (e) {
+      debugPrint("그외 에러");
       throw MyException(e.toString());
     }
     // authPersistence(); // 인증 영속

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:onecard/pages/main_page.dart';
 
 Future<bool> onBackKey({
   required BuildContext context,
@@ -20,7 +21,14 @@ Future<bool> onBackKey({
         actions: actions ??
             [
               TextButton(
-                  onPressed: yes ?? () => Navigator.pop(context, true),
+                  onPressed: yes ??
+                      () => Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MainPage(
+                                    gameResult: false,
+                                  )),
+                          (route) => false),
                   child: const Text('네')),
               TextButton(
                 onPressed: no ?? () => Navigator.pop(context, false),

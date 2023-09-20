@@ -71,6 +71,7 @@ Future<bool> gameResult({
         actions: [
           TextButton(
             onPressed: () {
+              // Navigator.pop(context, true);
               Navigator.pushAndRemoveUntil(
                   context,
                   MaterialPageRoute(

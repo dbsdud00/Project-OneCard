@@ -11,15 +11,20 @@ void customToast(String text, FToast fToast) {
       ),
       color: const Color.fromARGB(255, 201, 223, 255),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(80, 20, 80, 20),
-            child: Text(
-              text,
-              style: const TextStyle(
-                color: Colors.black87,
-                fontSize: 16.0,
+            padding: const EdgeInsets.fromLTRB(70, 20, 70, 20),
+            child: SizedBox(
+              width: 200,
+              child: Text(
+                text,
+                style: const TextStyle(
+                  color: Colors.black87,
+                  fontSize: 16.0,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           )

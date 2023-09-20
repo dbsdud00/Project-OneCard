@@ -10,6 +10,7 @@ import 'package:onecard/module/btn_elevated_func.dart';
 import 'package:onecard/module/game_helper.dart';
 import 'package:onecard/module/on_back_key.dart';
 import 'package:onecard/module/show_dialog.dart';
+import 'package:onecard/module/text_outline.dart';
 import 'package:playing_cards/playing_cards.dart';
 
 class GamePage extends StatefulWidget {
@@ -50,6 +51,13 @@ class _GamePageState extends State<GamePage> {
             seconds--;
           } else {
             playerTurn = false;
+            if (attackMode || drawDeck.isEmpty) {
+              for (int i = 0; i < attackStack; i++) {
+                GameHelper().drawCardInDeck(
+                    deck: deck, targetDeck: playerDeck, gameDeck: gameDeck);
+              }
+              attackMode = false;
+            }
             if (drawDeck.isEmpty) {
               GameHelper().drawCardInDeck(
                   deck: deck, targetDeck: playerDeck, gameDeck: gameDeck);
@@ -65,7 +73,6 @@ class _GamePageState extends State<GamePage> {
   void _stopTimer() {
     isRunning = false;
     _timer.cancel();
-
     playerTurn = false;
     seconds = 20;
     setState(() {});
@@ -86,12 +93,21 @@ class _GamePageState extends State<GamePage> {
     debugPrint("누가먼저? $turn");
   }
 
+  /*
+Navigator.of(context).pushedNamed("/mypage");
+  */
   @override
   Widget build(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 2000), () {
       if (computerDeck.isEmpty) {
         debugPrint("패배");
         gameResult(context: context, result: false);
+        // Navigator.of(context).pushNamed(
+        //   "/main",
+        //   arguments: {
+        //     "gameResult": false,
+        //   },
+        // );
       } else if (computerDeck.length > 20) {
         gameResult(context: context, result: true);
       }
@@ -100,46 +116,62 @@ class _GamePageState extends State<GamePage> {
         gameResult(context: context, result: true);
       } else if (playerDeck.length > 20) {
         gameResult(context: context, result: false);
-      } else {
-        try {
-          debugPrint("남은 카드 개수 : ${deck.length}");
+      }
+      try {
+        debugPrint("남은 카드 개수 : ${deck.length}");
 
-          avalCardRendering(playerDeck: playerDeck, showBack: false);
-          avalCardRendering(playerDeck: computerDeck, showBack: true);
-          if (playerTurn) {
-            _startTimer();
-          } else {
-            _stopTimer();
-            debugPrint("컴퓨터 턴");
-
-            if (computerAvalDeck.isEmpty) {
-              if (drawDeck.isEmpty) {
-                GameHelper().drawCardInDeck(
-                    deck: deck, targetDeck: computerDeck, gameDeck: gameDeck);
-              }
-              drawDeck = [];
-              playerTurn = true;
-            } else {
-              Future.delayed(const Duration(milliseconds: 100), () async {
-                avalCardRendering(playerDeck: computerDeck, showBack: true);
-                debugPrint("컴퓨터 낼수있는 카드 개수 : ${computerAvalDeck.length}");
-                for (int i = 0; i < computerAvalDeck.length; i++) {
-                  debugPrint(
-                      "컴퓨터가 낼수있는 카드 : ${computerAvalDeck[i].card.suit.toString().split(".")[1]}/${computerAvalDeck[i].card.value.toString().split(".")[1]}");
-                }
-                int cNum = Random().nextInt(computerAvalDeck.length) + 1;
-                debugPrint(
-                    "컴퓨터 선택한 카드 : ${computerAvalDeck[cNum].card.suit}/${computerAvalDeck[cNum].card.value.toString().split(".")[1]}");
-                drawDeck.add(computerDeck[computerAvalDeck[cNum].index]);
-                gameDeck
-                    .add(computerDeck.removeAt(computerAvalDeck[cNum].index));
-                computerAvalDeck = [];
-              });
+        avalCardRendering(playerDeck: playerDeck, showBack: false);
+        avalCardRendering(playerDeck: computerDeck, showBack: true);
+        if (playerTurn) {
+          _startTimer();
+        } else {
+          _stopTimer();
+          debugPrint("컴퓨터 턴");
+          if (attackMode && computerAvalDeck.isEmpty) {
+            for (int i = 0; i < attackStack; i++) {
+              GameHelper().drawCardInDeck(
+                  deck: deck, targetDeck: computerDeck, gameDeck: gameDeck);
             }
+            attackMode = false;
+          } else if (computerAvalDeck.isEmpty) {
+            if (drawDeck.isEmpty) {
+              GameHelper().drawCardInDeck(
+                  deck: deck, targetDeck: computerDeck, gameDeck: gameDeck);
+            }
+            drawDeck = [];
+            playerTurn = true;
+          } else {
+            Future.delayed(const Duration(milliseconds: 100), () async {
+              avalCardRendering(playerDeck: computerDeck, showBack: true);
+
+              debugPrint("컴퓨터 낼수있는 카드 개수 : ${computerAvalDeck.length}");
+              for (int i = 0; i < computerAvalDeck.length; i++) {
+                debugPrint(
+                    "컴퓨터가 낼수있는 카드 : ${computerAvalDeck[i].card.suit.toString().split(".")[1]}/${computerAvalDeck[i].card.value.toString().split(".")[1]}");
+              }
+              int cNum = Random().nextInt(computerAvalDeck.length) + 1;
+              if (computerDeck[computerAvalDeck[cNum].index].isAtack) {
+                attackMode = true;
+                debugPrint("공격모드임");
+                int cardAttackStack = GameHelper().stringToNumber(
+                        computerDeck[computerAvalDeck[cNum].index]
+                            .card
+                            .value
+                            .toString()
+                            .split(".")[1]) ~/
+                    100;
+                attackStack += cardAttackStack;
+              }
+              debugPrint(
+                  "컴퓨터 선택한 카드 : ${computerAvalDeck[cNum].card.suit}/${computerAvalDeck[cNum].card.value.toString().split(".")[1]}");
+              drawDeck.add(computerDeck[computerAvalDeck[cNum].index]);
+              gameDeck.add(computerDeck.removeAt(computerAvalDeck[cNum].index));
+              computerAvalDeck = [];
+            });
           }
-        } catch (e) {
-          debugPrint(e.toString());
         }
+      } catch (e) {
+        debugPrint(e.toString());
       }
     });
 
@@ -232,15 +264,28 @@ class _GamePageState extends State<GamePage> {
                                   _stopTimer();
                                 });
                               },
-                        child: SizedBox(
-                          height: 150,
-                          child: PlayingCardView(
-                            card: PlayingCard(Suit.spades, CardValue.ace),
-                            showBack: true,
-                            elevation: 3.0,
-                            shape: shape,
-                            style: myCardStyles,
-                          ),
+                        child: Stack(
+                          children: [
+                            SizedBox(
+                              height: 150,
+                              child: PlayingCardView(
+                                card: PlayingCard(Suit.spades, CardValue.ace),
+                                showBack: true,
+                                elevation: 3.0,
+                                shape: shape,
+                                style: myCardStyles,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 150,
+                              width: 105,
+                              child: Center(
+                                  child: textOutline(
+                                      textValue: "$attackStack",
+                                      fontSize: 30,
+                                      innerColor: Colors.red)),
+                            )
+                          ],
                         ),
                       ),
                       // elevatedBtn(context,
@@ -257,7 +302,15 @@ class _GamePageState extends State<GamePage> {
                             child: ElevatedButton(
                               onPressed: isRunning
                                   ? () {
-                                      if (drawDeck.isEmpty) {
+                                      if (attackMode && drawDeck.isEmpty) {
+                                        for (int i = 0; i < attackStack; i++) {
+                                          GameHelper().drawCardInDeck(
+                                              deck: deck,
+                                              targetDeck: playerDeck,
+                                              gameDeck: gameDeck);
+                                        }
+                                        attackMode = false;
+                                      } else if (drawDeck.isEmpty) {
                                         GameHelper().drawCardInDeck(
                                             deck: deck,
                                             targetDeck: playerDeck,
@@ -326,6 +379,18 @@ class _GamePageState extends State<GamePage> {
                   debugPrint("카드 클릭함");
 
                   CardDto selectCard = playerDeck[i];
+                  if (selectCard.isAtack) {
+                    attackMode = true;
+                    debugPrint("공격모드임");
+                    int cardAttackStack = GameHelper().stringToNumber(
+                            playerDeck[i]
+                                .card
+                                .value
+                                .toString()
+                                .split(".")[1]) ~/
+                        100;
+                    attackStack += cardAttackStack;
+                  }
                   boardDeck.add(playerDeck.removeAt(i));
                   for (int a = 0; a < playerDeck.length; a++) {
                     playerDeck[a].avalCard = false;
@@ -378,6 +443,10 @@ class _GamePageState extends State<GamePage> {
           .stringToNumber(playerDeck[i].card.value.toString().split(".")[1]);
       String myCardSuit = playerDeck[i].card.suit.toString().split(".")[1];
       // debugPrint("2222222222$myCardSuit");
+      if (gameCardValue >= 100) {
+        debugPrint("$gameCardValue is attackCard");
+        playerDeck[i].isAtack = true;
+      }
       if (!attackMode) {
         if (gameCardValue == myCardValue) {
           playerDeck[i].avalCard = true;
