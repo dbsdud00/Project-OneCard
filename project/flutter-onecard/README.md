@@ -1,16 +1,7 @@
-# onecard
+# 실 스마트폰 디버깅 설정하기
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- `Android Studio` 에 Key 만들기 : build > Generator Bundle 메뉴에서 생성
+- `C:\Users\KMS5050022\Documents`
+- `jdk` 설치 폴더로 이동 : `C:\Users\KMS5050022\Downloads\devTools\jdk-15.0.2\bin`
+- `jdk` 폴더에서 `윈도우 cmd 열기`
+- `keytool -list -v -keystore C:\Users\KMS5050022\Documents\yoooy.jks`
